@@ -1,0 +1,11 @@
+async-timeout
+attrs
+chardet
+multidict
+yarl
+aiohttp
+transaction
+SQLAlchemy
+zope.interface
+zope.sqlalchemy
+
