@@ -1,3 +1,19 @@
+# How to get this thing working
+
+Just install the `requirements.txt`, run `models.py` to generate the db structure, then run `app.py` to see it fail!
+
+An example of the type of curl request this things will do:
+```
+curl -X POST -H "Content-Type: application/json" \                                                                                                                                                                                     
+ -d '{ "survived": "true", "passengerClass": 3, "name": "Mr. Owen Harris Braund", "sex": "male", "age": 22, "siblingsOrSpousesAboard": 1, "parentsOrChildrenAboard":0, "fare":7.25}' \
+ http://localhost:8080/people
+```
+That should add Mr. Owen to the DB. Except it doesn't right now.
+
+Also, I need to make it so that whenever a user is added, and for every user imported from the csv file, a UUID gets generated off the hash of their name.
+
+---
+
 # API-exercise
 
 This exercise is to assess your technical proficiency with Software Engineering, DevOps and Infrastructure tasks.
