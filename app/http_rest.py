@@ -95,29 +95,6 @@ class CollectionEndpoint(RestEndpoint):
         data = self.resource.render_and_encode(instance)
         return Response(status=200, body=data, content_type='application/json')
 
-
-#        response = Response(status=201, body=self.resource.encode({person}), content_type='application/json')        
-#        response = Response(status=201, body=self.resource.encode({
-#            'person': [
-#                {
-#                'uuid'                      : person.uuid,
-#                'survived'                  : person.survived,
-#                'passengerClass'            : person.passengerClass,
-#                'name'                      : person.name,
-#                'sex'                       : person.sex,
-#                'age'                       : person.age,
-#                'siblingsOrSpousesAboard'   : person.siblingsOrSpousesAboard,
-#                'parentsOrChildrenAboard'   : person.parentsOrChildrenAboard,
-#                'fare'                      : person.fare
-#                }
-#
-#                    for person in session.query(Titanic)
-#
-#                    ]
-#            }), content_type='application/json')
-        
-#        return response 
-
 class InstanceEndpoint(RestEndpoint):
     def __init__(self, resource):
         super().__init__()
