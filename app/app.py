@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config
 
 people = {}
 app = Application()
-person_resource = RestResource('people', Titanic, people, ('survived', 'passengerClass', 'name', 'sex', 'age'), 'uuid')
+person_resource = RestResource('people', Titanic, people, ('uuid', 'survived', 'passengerClass', 'name', 'sex', 'age', 'siblingsOrSpousesAboard', 'parentsOrChildrenAboard', 'fare'), 'uuid')
 person_resource.register(app.router)
 
 

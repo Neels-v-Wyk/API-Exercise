@@ -1,17 +1,57 @@
-# How to get this thing working
+# How to get this party started
 
-Just install the `requirements.txt`, run `models.py` to generate the db structure, then run `app.py` to see it fail!
+## Create the image (optional)
+Build the image with docker-compose:
+`docker-compose build`
+
+Push the image to the docker hub registry after tagging it:
+`docker tag api-exercise_api_excercise lsdneels/api-exercise:latest`                                                                                                                                       ±[●●][master]
+`docker push lsdneels/api-exercise:latest`
+
+## Deploy to kubernetes
+
+Deploy that little container to kubernetes:
+`kubectl create -f k8s/*`
+
+Pow, it's all running. If you're running minikube, you can easily get the address like so:
+```
+user@host : minikube service list                                                                                                                                                                             ±[●●][master]
+|--------------|----------------------|-----------------------------|
+|  NAMESPACE   |         NAME         |             URL             |
+|--------------|----------------------|-----------------------------|
+| api-exercise | api-exercise         | http://192.168.99.100:31578 |
+| default      | kubernetes           | No node port                |
+| kube-system  | kube-dns             | No node port                |
+| kube-system  | kubernetes-dashboard | No node port                |
+|--------------|----------------------|-----------------------------|
+```
 
 An example of the type of curl request this things will do:
+
+
+*Get everyone*
+```
+curl -X GET -H "Content-Type: application/json"  http://localhost:8080/people
+```
+*Get a specific person*
+```
+curl -X GET -H "Content-Type: application/json"  http://localhost:8080/people/{uuid}
+```
+*Create a person*
 ```
 curl -X POST -H "Content-Type: application/json" \                                                                                                                                                                                     
- -d '{ "survived": "true", "passengerClass": 3, "name": "Mr. Owen Harris Braund", "sex": "male", "age": 22, "siblingsOrSpousesAboard": 1, "parentsOrChildrenAboard":0, "fare":7.25}' \
- http://localhost:8080/people
+ -d '{ "survived": true, "passengerClass": 3, "name": "Mr. Tom Bombadil", "sex": "male", "age": 100, "siblingsOrSpousesAboard": 0, "parentsOrChildrenAboard": 0, "fare": 00.0}' \
+ http://192.168.99.100:31578/people
 ```
-That should add Mr. Owen to the DB. Except it doesn't right now.
-
-Also, I need to make it so that whenever a user is added, and for every user imported from the csv file, a UUID gets generated off the hash of their name.
-
+*Delete a person*
+```
+curl -X DELETE -H "Content-Type: application/json"  http://localhost:8080/people/{uuid}
+```
+*Update a persnon*
+```
+~/git/API-Exercise >>> curl -X PUT -H "Content-Type: application/json" \                                                                                                                                                                                     -d '{ "survived": false, "passengerClass": 3, "name": "Mr. Tom Bombadil", "sex": "male", "age": 99, "siblingsOrSpousesAboard": 2, "parentsOrChildrenAboard":0, "fare":00.0}' \
+ http://localhost:8080/people/{uuid}
+```
 ---
 
 # API-exercise

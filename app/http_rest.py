@@ -1,5 +1,6 @@
 import inspect
 import json
+import uuid
 from collections import OrderedDict
 from models import Titanic, session
 from aiohttp.http_exceptions import  HttpBadRequest
@@ -54,9 +55,12 @@ class CollectionEndpoint(RestEndpoint):
         for instance in self.resource.collection.values():
             data.append(self.resource.render(instance))
         data = self.resource.encode(data)
-        return Response ( status=200, body=self.resource.encode({
-            'person': [
-                {
+
+        body = []
+
+        for person in session.query(Titanic):
+            body.append({
+                'uuid'                      : person.uuid,
                 'survived'                  : person.survived,
                 'passengerClass'            : person.passengerClass,
                 'name'                      : person.name,
@@ -65,17 +69,16 @@ class CollectionEndpoint(RestEndpoint):
                 'siblingsOrSpousesAboard'   : person.siblingsOrSpousesAboard,
                 'parentsOrChildrenAboard'   : person.parentsOrChildrenAboard,
                 'fare'                      : person.fare
-                }
+                })
 
-                    for person in session.query(Titanic)
+        response = Response ( status=200, body=self.resource.encode(body), content_type='application/json')
 
-                    ]
-            }), content_type='application/json')
-
+        return response
 
     async def post(self, request):
         data = await request.json()
         person=Titanic(
+            uuid                    = str(uuid.uuid5(uuid.NAMESPACE_DNS, data['name'])),
             survived                = data['survived'],
             passengerClass          = data['passengerClass'],
             name                    = data['name'],
@@ -87,27 +90,33 @@ class CollectionEndpoint(RestEndpoint):
 
         session.add(person)
         session.commit()
-        
-        sensible_response = Response(status=201, body=self.resource.encode({
-            'person': [
-                {
-                'uuid'                      : person.uuid,
-                'survived'                  : person.survived,
-                'passengerClass'            : person.passengerClass,
-                'name'                      : person.name,
-                'sex'                       : person.sex,
-                'age'                       : person.age,
-                'siblingsOrSpousesAboard'   : person.siblingsOrSpousesAboard,
-                'parentsOrChildrenAboard'   : person.parentsOrChildrenAboard,
-                'fare'                      : person.fare
-                }
 
-                    for person in session.query(Titanic)
+        instance = session.query(Titanic).filter(Titanic.name == person.name).first()
+        data = self.resource.render_and_encode(instance)
+        return Response(status=200, body=data, content_type='application/json')
 
-                    ]
-            }), content_type='application/json')
+
+#        response = Response(status=201, body=self.resource.encode({person}), content_type='application/json')        
+#        response = Response(status=201, body=self.resource.encode({
+#            'person': [
+#                {
+#                'uuid'                      : person.uuid,
+#                'survived'                  : person.survived,
+#                'passengerClass'            : person.passengerClass,
+#                'name'                      : person.name,
+#                'sex'                       : person.sex,
+#                'age'                       : person.age,
+#                'siblingsOrSpousesAboard'   : person.siblingsOrSpousesAboard,
+#                'parentsOrChildrenAboard'   : person.parentsOrChildrenAboard,
+#                'fare'                      : person.fare
+#                }
+#
+#                    for person in session.query(Titanic)
+#
+#                    ]
+#            }), content_type='application/json')
         
-        return json.loads(sensible_response)
+#        return response 
 
 class InstanceEndpoint(RestEndpoint):
     def __init__(self, resource):
@@ -115,7 +124,7 @@ class InstanceEndpoint(RestEndpoint):
         self.resource = resource
 
     async def get(self, uuid):
-        instance = session.query(Titanic).filter(Titanic.id == uuid).first()
+        instance = session.query(Titanic).filter(Titanic.uuid == uuid).first()
         if not instance:
             return Response(status=404, body=json.dumps({'not found': 404}), content_type='application/json')
         data = self.resource.render_and_encode(instance)
@@ -124,8 +133,10 @@ class InstanceEndpoint(RestEndpoint):
     async def put(self, request, uuid):
 
         data = await request.json()
+        
+        does_exist = session.query(Titanic).filter(Titanic.uuid == uuid).one_or_none()
 
-        person = session.query(Titanic).filter(Titanic.id == uuid).first()
+        person = session.query(Titanic).filter(Titanic.uuid == uuid).first()
         person.survived                 = data['survived']
         person.passengerClass           = data['passengerClass']
         person.name                     = data['name']
@@ -134,14 +145,16 @@ class InstanceEndpoint(RestEndpoint):
         person.siblingsOrSpousesAboard  = data['siblingsOrSpousesAboard']
         person.parentsOrChildrenAboard  = data['parentsOrChildrenAboard']
         person.fare                     = data['fare']
-        session.add(person)
+
+        if does_exist is None:
+            session.add(person)
+
         session.commit()
 
-        return Response(status=201, body=self.resource.render_and_encode(person),
-                        content_type='application/json')
+        return Response(status=204)
 
     async def delete(self, uuid):
-        person = session.query(Titanic).filter(Titanic.id == uuid).first()
+        person = session.query(Titanic).filter(Titanic.uuid == uuid).first()
         if not person:
             abort(404, message="Passenger {} doesn't exist".format(id))
         session.delete(person)
@@ -170,7 +183,7 @@ class RestResource:
 
     @staticmethod
     def encode(data):
-        return json.dumps(data, indent=4).encode('utf-8')
+        return json.dumps(data, indent=None).encode('utf-8')
 
     def render_and_encode(self, instance):
         return self.encode(self.render(instance))

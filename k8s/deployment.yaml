@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-exercise
+  namespace: api-exercise
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-exercise
+  template:
+    metadata:
+      labels:
+        app: api-exercise
+    spec:
+      containers:
+      - name: api-exercise
+        image: lsdneels/api-exercise:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+

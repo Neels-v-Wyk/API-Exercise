@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from zope.sqlalchemy import ZopeTransactionExtension
+from db_ready import make_db_ready
 
 DB_URI = 'sqlite:///titanic.db'
 
@@ -11,12 +12,13 @@ Session = sessionmaker(autocommit=False,
 session = scoped_session(Session)
 Base = declarative_base()
 
-class Titanic(Base):             # Set up a table for SQLAlchemy
+class Titanic(Base):            # defines a model for SQLAlchemy
 
     __tablename__ = "passengers"
+    __table_args__ = {'sqlite_autoincrement': True}
 
-    uuid                        = Column(Boolean, primary_key=True)
-    survived                    = Column(String(5))
+    uuid                        = Column(String(36), primary_key=True)
+    survived                    = Column(Boolean)
     passengerClass              = Column(Integer)
     name                        = Column(String(30))
     sex                         = Column(String(6))
@@ -25,24 +27,13 @@ class Titanic(Base):             # Set up a table for SQLAlchemy
     parentsOrChildrenAboard     = Column(Integer)
     fare                        = Column(Float)
 
-    def __init__(survived, passengerClass, name, sex, age, siblingsOrSpousesAboard, parentsOrChildrenAboard, fare):
-
-        self.survived                   = survived
-        self.passengerClass             = passengerClass
-        self.name                       = name
-        self.sex                        = sex
-        self.age                        = age
-        self.siblingsOrSpousesAboard    = siblingsOrSpousesAboard
-        self.parentsOrChildrenAboard    = parentsOrChildrenAboard
-        self.fare                       = fare
-
     @classmethod
     def from_json(cls, data):
         return cls(**data)
     
     # Map the key/value pairs
     def to_json(self):
-        make_serialized = ['survived', 'passengerClass', 'name', 'sex', 'age', 'siblingsOrSpousesAboard', 'parentsOrChildrenAboard', 'fare']
+        make_serialized = ['uuid', 'survived', 'passengerClass', 'name', 'sex', 'age', 'siblingsOrSpousesAboard', 'parentsOrChildrenAboard', 'fare']
         d = {}
         for attr in unserialized:
             d[attr] = getattr(self, attr_name)
@@ -54,3 +45,4 @@ if __name__ == "__main__":
     engine = create_engine(DB_URI)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+    make_db_ready('titanic.csv', engine, Titanic.__tablename__, 'replace')
