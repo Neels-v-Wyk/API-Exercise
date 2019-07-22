@@ -5,7 +5,7 @@ Build the image with docker-compose:
 `docker-compose build`
 
 Push the image to the docker hub registry after tagging it:
-`docker tag api-exercise_api_excercise lsdneels/api-exercise:latest`                                                                                                                                       ±[●●][master]
+`docker tag api-exercise_api_excercise lsdneels/api-exercise:latest`
 `docker push lsdneels/api-exercise:latest`
 
 ## Deploy to kubernetes
@@ -15,7 +15,7 @@ Deploy that little container to kubernetes:
 
 Pow, it's all running. If you're running minikube, you can easily get the address like so:
 ```
-user@host : minikube service list                                                                                                                                                                             ±[●●][master]
+user@host : minikube service list
 |--------------|----------------------|-----------------------------|
 |  NAMESPACE   |         NAME         |             URL             |
 |--------------|----------------------|-----------------------------|
