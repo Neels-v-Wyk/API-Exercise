@@ -4,6 +4,9 @@ This was done as an exercise to gauge my own skills with the tools involved. It'
 
 # How to get this party started
 
+## Running manually (you savage)
+
+First run `app/models.py` to generate the DB, then run `app/app.py` to get the webserver running
 ## Create the image (optional)
 Build the image with docker-compose:
 `docker-compose build`
@@ -30,8 +33,8 @@ user@host : minikube service list
 |--------------|----------------------|-----------------------------|
 ```
 
-An example of the type of curl request this things will do:
 
+## Example API Calls
 
 *Get everyone*
 ```
