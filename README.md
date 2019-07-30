@@ -7,15 +7,15 @@ This was done as an exercise to gauge my own skills with the tools involved. It'
 ## Running manually (you savage)
 
 First run `app/models.py` to generate the DB, then run `app/app.py` to get the webserver running
-## Create the image (optional)
+
+## Deploy to kubernetes (optional)
+# Create the image (can just pull the image too y'know)
 Build the image with docker-compose:
 `docker-compose build`
 
 Push the image to the docker hub registry after tagging it:
 `docker tag api-exercise_api_excercise lsdneels/api-exercise:latest`
 `docker push lsdneels/api-exercise:latest`
-
-## Deploy to kubernetes
 
 Deploy that little container to kubernetes:
 `kubectl create -f k8s/*`
