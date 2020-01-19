@@ -1,6 +1,6 @@
 # How to get this party started
 
-There's two methods to run this (native or in k8s), neither has any particular advantage, but running native will get you going quicker. I did the kubernetes parts mainly for the purpose of showing that I know how it works.
+There's two methods to run this (native or in k8s), neither has any particular advantage, but running native will get you going quicker. I did the kubernetes parts mainly for POC.
 
 ## Running native
 
