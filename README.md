@@ -55,6 +55,6 @@ curl -X DELETE -H "Content-Type: application/json"  http://192.168.99.100:31578/
 ```
 *Update a person*
 ```
-~/git/API-Exercise >>> curl -X PUT -H "Content-Type: application/json" \                                                                                                                                                                                     -d '{ "survived": false, "passengerClass": 3, "name": "Mr. Tom Bombadil", "sex": "male", "age": 99, "siblingsOrSpousesAboard": 2, "parentsOrChildrenAboard":0, "fare":00.0}' \
+curl -X PUT -H "Content-Type: application/json" \                                                                                                                                                                                     -d '{ "survived": false, "passengerClass": 3, "name": "Mr. Tom Bombadil", "sex": "male", "age": 99, "siblingsOrSpousesAboard": 2, "parentsOrChildrenAboard":0, "fare":00.0}' \
  http://192.168.99.100:31578/people/{uuid}
 ```
